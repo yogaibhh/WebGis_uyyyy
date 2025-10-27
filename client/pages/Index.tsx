@@ -393,12 +393,20 @@ function useStatusColor(k: Kabupaten) {
   return s >= t ? COLORS.success : COLORS.warning;
 }
 
-function FitBounds({ bounds }: { bounds?: [[number, number], [number, number]] }) {
+function FitBounds({
+  bounds,
+}: {
+  bounds?: [[number, number], [number, number]];
+}) {
   const map = useMap();
   useEffect(() => {
     if (bounds) {
       try {
-        map.flyToBounds(bounds as any, { duration: 0.9, paddingTopLeft: [20, 20], paddingBottomRight: [20, 20] });
+        map.flyToBounds(bounds as any, {
+          duration: 0.9,
+          paddingTopLeft: [20, 20],
+          paddingBottomRight: [20, 20],
+        });
       } catch {}
     }
   }, [bounds, map]);
@@ -409,13 +417,20 @@ export default function WebGISDashboard() {
   // App state
   const [level, setLevel] = useState<Level>("island");
   const [selectedIslandId, setSelectedIslandId] = useState<string | null>(null);
-  const [selectedProvinceId, setSelectedProvinceId] = useState<string | null>(null);
+  const [selectedProvinceId, setSelectedProvinceId] = useState<string | null>(
+    null,
+  );
   const [search, setSearch] = useState("");
 
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [editingKab, setEditingKab] = useState<Kabupaten | null>(null);
-  const [form, setForm] = useState({ selaras: "", tidakSelaras: "", potensi: "", catatan: "" });
+  const [form, setForm] = useState({
+    selaras: "",
+    tidakSelaras: "",
+    potensi: "",
+    catatan: "",
+  });
 
   // Open modal helper
   const openModal = (kab: Kabupaten) => {
@@ -439,12 +454,21 @@ export default function WebGISDashboard() {
   }, [modalOpen]);
 
   // Derived data
-  const island = useMemo(() => ISLANDS.find((i) => i.id === selectedIslandId) || null, [selectedIslandId]);
-  const provincesInIsland = useMemo(
-    () => PROVINCES.filter((p) => !selectedIslandId || p.islandId === selectedIslandId),
+  const island = useMemo(
+    () => ISLANDS.find((i) => i.id === selectedIslandId) || null,
     [selectedIslandId],
   );
-  const province = useMemo(() => PROVINCES.find((p) => p.id === selectedProvinceId) || null, [selectedProvinceId]);
+  const provincesInIsland = useMemo(
+    () =>
+      PROVINCES.filter(
+        (p) => !selectedIslandId || p.islandId === selectedIslandId,
+      ),
+    [selectedIslandId],
+  );
+  const province = useMemo(
+    () => PROVINCES.find((p) => p.id === selectedProvinceId) || null,
+    [selectedProvinceId],
+  );
 
   const kabList = useMemo(() => {
     const list = province?.kabupaten ?? [];
@@ -455,7 +479,8 @@ export default function WebGISDashboard() {
 
   const currentBounds = useMemo(() => {
     if (level === "island" && island) return polygonToBounds(island.polygon);
-    if (level !== "island" && province) return polygonToBounds(province.polygon);
+    if (level !== "island" && province)
+      return polygonToBounds(province.polygon);
     return undefined;
   }, [level, island, province]);
 
@@ -470,7 +495,9 @@ export default function WebGISDashboard() {
     if (!editingKab || !province) return;
     const idxProv = PROVINCES.findIndex((p) => p.id === province.id);
     if (idxProv < 0) return;
-    const idxKab = PROVINCES[idxProv].kabupaten.findIndex((k) => k.id === editingKab.id);
+    const idxKab = PROVINCES[idxProv].kabupaten.findIndex(
+      (k) => k.id === editingKab.id,
+    );
     if (idxKab < 0) return;
     const s = form.selaras ? parseInt(form.selaras, 10) : undefined;
     const t = form.tidakSelaras ? parseInt(form.tidakSelaras, 10) : undefined;
@@ -522,7 +549,9 @@ export default function WebGISDashboard() {
       {province && (
         <>
           <ChevronRight className="h-4 w-4 opacity-60" />
-          <span className="px-2 py-1 rounded-md bg-secondary/20">{province.name}</span>
+          <span className="px-2 py-1 rounded-md bg-secondary/20">
+            {province.name}
+          </span>
         </>
       )}
     </div>
@@ -534,18 +563,29 @@ export default function WebGISDashboard() {
       <header className="sticky top-0 z-30 border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
         <div className="container flex items-center justify-between py-3">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-primary text-white grid place-items-center font-bold">ID</div>
+            <div className="h-9 w-9 rounded-xl bg-primary text-white grid place-items-center font-bold">
+              ID
+            </div>
             <div>
-              <h1 className="text-lg font-semibold tracking-tight">WebGIS Dashboard RPJPN/RPJMN/RPPLH</h1>
-              <p className="text-xs text-muted-foreground">Monitoring keselarasan program pembangunan • Nasional</p>
+              <h1 className="text-lg font-semibold tracking-tight">
+                WebGIS Dashboard RPJPN/RPJMN/RPPLH
+              </h1>
+              <p className="text-xs text-muted-foreground">
+                Monitoring keselarasan program pembangunan • Nasional
+              </p>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-2">
-            <Button variant="outline" className="border-primary/30 text-primary">
+            <Button
+              variant="outline"
+              className="border-primary/30 text-primary"
+            >
               <BarChart2 className="h-4 w-4" />
               Ringkasan
             </Button>
-            <Button className="bg-primary hover:bg-primary/90">Publikasikan</Button>
+            <Button className="bg-primary hover:bg-primary/90">
+              Publikasikan
+            </Button>
           </div>
         </div>
         <div className="container py-2">{breadcrumb}</div>
@@ -598,7 +638,12 @@ export default function WebGISDashboard() {
                 <Polygon
                   key={i.id}
                   positions={i.polygon as LatLngExpression[]}
-                  pathOptions={{ color: COLORS.primary, weight: 2, fillColor: COLORS.secondary, fillOpacity: 0.15 }}
+                  pathOptions={{
+                    color: COLORS.primary,
+                    weight: 2,
+                    fillColor: COLORS.secondary,
+                    fillOpacity: 0.15,
+                  }}
                   eventHandlers={{
                     click: () => {
                       setSelectedIslandId(i.id);
@@ -614,7 +659,10 @@ export default function WebGISDashboard() {
                 key={p.id}
                 positions={p.polygon as LatLngExpression[]}
                 pathOptions={{
-                  color: p.id === selectedProvinceId ? COLORS.primary : COLORS.secondary,
+                  color:
+                    p.id === selectedProvinceId
+                      ? COLORS.primary
+                      : COLORS.secondary,
                   weight: p.id === selectedProvinceId ? 3 : 1.5,
                   fillColor: COLORS.secondary,
                   fillOpacity: 0.08,
@@ -629,13 +677,19 @@ export default function WebGISDashboard() {
             ))}
 
             {/* Kabupaten markers (only when province selected) */}
-            {level === "kabupaten" && province &&
-              (province.kabupaten).map((k) => (
+            {level === "kabupaten" &&
+              province &&
+              province.kabupaten.map((k) => (
                 <CircleMarker
                   key={k.id}
                   center={k.coord as LatLngExpression}
                   radius={8}
-                  pathOptions={{ color: "#fff", weight: 2, fillColor: useStatusColor(k), fillOpacity: 0.9 }}
+                  pathOptions={{
+                    color: "#fff",
+                    weight: 2,
+                    fillColor: useStatusColor(k),
+                    fillOpacity: 0.9,
+                  }}
                   eventHandlers={{
                     click: () => openModal(k),
                   }}
@@ -643,7 +697,9 @@ export default function WebGISDashboard() {
                   <LeafletTooltip direction="top">
                     <div className="space-y-1">
                       <div className="font-medium">{k.name}</div>
-                      <div className="text-xs">Selaras: {k.selaras ?? 0} • Tidak: {k.tidakSelaras ?? 0}</div>
+                      <div className="text-xs">
+                        Selaras: {k.selaras ?? 0} • Tidak: {k.tidakSelaras ?? 0}
+                      </div>
                     </div>
                   </LeafletTooltip>
                 </CircleMarker>
@@ -657,10 +713,14 @@ export default function WebGISDashboard() {
             <div>
               <h2 className="text-base md:text-lg font-semibold">
                 {level === "island" && "Pilih Pulau"}
-                {level === "province" && (island ? `Provinsi di ${island.name}` : "Pilih Provinsi")}
-                {level === "kabupaten" && (province ? `Kab/Kota • ${province.name}` : "Kab/Kota")}
+                {level === "province" &&
+                  (island ? `Provinsi di ${island.name}` : "Pilih Provinsi")}
+                {level === "kabupaten" &&
+                  (province ? `Kab/Kota • ${province.name}` : "Kab/Kota")}
               </h2>
-              <p className="text-xs text-muted-foreground">Klik di peta atau pilih dari daftar</p>
+              <p className="text-xs text-muted-foreground">
+                Klik di peta atau pilih dari daftar
+              </p>
             </div>
           </div>
 
@@ -715,8 +775,12 @@ export default function WebGISDashboard() {
                         <ChevronRight className="h-4 w-4 text-muted-foreground" />
                       </div>
                       <div className="mt-1 flex gap-2 text-xs">
-                        <span className="inline-flex items-center gap-1 rounded bg-success/15 text-success px-2 py-0.5">OK</span>
-                        <span className="inline-flex items-center gap-1 rounded bg-warning/15 text-warning px-2 py-0.5">Perlu perhatian</span>
+                        <span className="inline-flex items-center gap-1 rounded bg-success/15 text-success px-2 py-0.5">
+                          OK
+                        </span>
+                        <span className="inline-flex items-center gap-1 rounded bg-warning/15 text-warning px-2 py-0.5">
+                          Perlu perhatian
+                        </span>
                       </div>
                     </button>
                   </li>
@@ -742,9 +806,13 @@ export default function WebGISDashboard() {
                           <div className="flex-1">
                             <div className="font-medium flex items-center gap-2">
                               {k.name}
-                              <span className="text-xs text-muted-foreground">({k.selaras ?? 0}/{k.tidakSelaras ?? 0})</span>
+                              <span className="text-xs text-muted-foreground">
+                                ({k.selaras ?? 0}/{k.tidakSelaras ?? 0})
+                              </span>
                             </div>
-                            <div className="text-xs text-muted-foreground line-clamp-1">{k.potensi ?? "Belum ada potensi"}</div>
+                            <div className="text-xs text-muted-foreground line-clamp-1">
+                              {k.potensi ?? "Belum ada potensi"}
+                            </div>
                           </div>
                           <MapPin className="h-4 w-4 text-muted-foreground" />
                         </div>
@@ -758,8 +826,21 @@ export default function WebGISDashboard() {
 
           {level === "kabupaten" && (
             <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" className="border-primary/30 text-primary" onClick={() => setSearch("")}>Bersihkan</Button>
-              <Button className="bg-primary hover:bg-primary/90" onClick={() => province && province.kabupaten[0] && openModal(province.kabupaten[0])}>
+              <Button
+                variant="outline"
+                className="border-primary/30 text-primary"
+                onClick={() => setSearch("")}
+              >
+                Bersihkan
+              </Button>
+              <Button
+                className="bg-primary hover:bg-primary/90"
+                onClick={() =>
+                  province &&
+                  province.kabupaten[0] &&
+                  openModal(province.kabupaten[0])
+                }
+              >
                 <PlusCircle className="h-4 w-4" /> Input Data
               </Button>
             </div>
@@ -771,18 +852,31 @@ export default function WebGISDashboard() {
       <section className="container pb-8">
         <div className="rounded-xl border bg-white p-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold">Perbandingan Program per Kab/Kota {province ? `• ${province.name}` : ""}</h3>
-            <div className="text-xs text-muted-foreground">Selaras vs Tidak Selaras</div>
+            <h3 className="font-semibold">
+              Perbandingan Program per Kab/Kota{" "}
+              {province ? `• ${province.name}` : ""}
+            </h3>
+            <div className="text-xs text-muted-foreground">
+              Selaras vs Tidak Selaras
+            </div>
           </div>
           <div className="h-64 mt-3">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ left: 12, right: 12 }}>
-                <XAxis dataKey="name" hide={chartData.length > 8} tick={{ fontSize: 12 }} />
+                <XAxis
+                  dataKey="name"
+                  hide={chartData.length > 8}
+                  tick={{ fontSize: 12 }}
+                />
                 <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
                 <Legend />
                 <ReTooltip />
                 <Bar dataKey="Selaras" stackId="a" fill={COLORS.success} />
-                <Bar dataKey="Tidak Selaras" stackId="a" fill={COLORS.warning} />
+                <Bar
+                  dataKey="Tidak Selaras"
+                  stackId="a"
+                  fill={COLORS.warning}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -793,17 +887,26 @@ export default function WebGISDashboard() {
       {modalOpen && editingKab && (
         <div className="fixed inset-0 z-[9999]">
           {/* Overlay */}
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setModalOpen(false)}
+          />
 
           {/* Dialog */}
           <div className="absolute inset-0 grid place-items-center p-4">
             <div className="w-full max-w-2xl rounded-xl bg-white shadow-xl border max-h-[85vh] overflow-hidden">
               <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-3 border-b bg-white/90 backdrop-blur">
                 <div className="flex items-center gap-2">
-                  <span className="h-8 w-8 rounded-lg bg-primary text-white grid place-items-center font-semibold">D</span>
+                  <span className="h-8 w-8 rounded-lg bg-primary text-white grid place-items-center font-semibold">
+                    D
+                  </span>
                   <div>
-                    <div className="font-semibold">Input Data DPSIR - {editingKab.name}</div>
-                    <div className="text-xs text-muted-foreground">Update data keselarasan program</div>
+                    <div className="font-semibold">
+                      Input Data DPSIR - {editingKab.name}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Update data keselarasan program
+                    </div>
                   </div>
                 </div>
                 <button
@@ -818,23 +921,31 @@ export default function WebGISDashboard() {
               <div className="px-5 py-4 overflow-y-auto space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium">Program Selaras</label>
+                    <label className="text-sm font-medium">
+                      Program Selaras
+                    </label>
                     <input
                       type="number"
                       min={0}
                       className="mt-1 w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30"
                       value={form.selaras}
-                      onChange={(e) => setForm((f) => ({ ...f, selaras: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, selaras: e.target.value }))
+                      }
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Program Tidak Selaras</label>
+                    <label className="text-sm font-medium">
+                      Program Tidak Selaras
+                    </label>
                     <input
                       type="number"
                       min={0}
                       className="mt-1 w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30"
                       value={form.tidakSelaras}
-                      onChange={(e) => setForm((f) => ({ ...f, tidakSelaras: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, tidakSelaras: e.target.value }))
+                      }
                     />
                   </div>
                 </div>
@@ -846,7 +957,9 @@ export default function WebGISDashboard() {
                     placeholder="contoh: Perikanan, Agroforestri, Pariwisata"
                     className="mt-1 w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30"
                     value={form.potensi}
-                    onChange={(e) => setForm((f) => ({ ...f, potensi: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, potensi: e.target.value }))
+                    }
                   />
                 </div>
 
@@ -856,7 +969,9 @@ export default function WebGISDashboard() {
                     rows={4}
                     className="mt-1 w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30"
                     value={form.catatan}
-                    onChange={(e) => setForm((f) => ({ ...f, catatan: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, catatan: e.target.value }))
+                    }
                   />
                 </div>
 
@@ -866,17 +981,30 @@ export default function WebGISDashboard() {
                   <div className="text-sm grid grid-cols-2 gap-2">
                     <div>Selaras: {form.selaras || 0}</div>
                     <div>Tidak Selaras: {form.tidakSelaras || 0}</div>
-                    <div className="col-span-2">Potensi: {form.potensi || "-"}</div>
-                    <div className="col-span-2">Catatan: {form.catatan || "-"}</div>
+                    <div className="col-span-2">
+                      Potensi: {form.potensi || "-"}
+                    </div>
+                    <div className="col-span-2">
+                      Catatan: {form.catatan || "-"}
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div className="sticky bottom-0 bg-white/90 backdrop-blur px-5 py-3 border-t flex items-center justify-end gap-2">
-                <Button variant="outline" className="border-primary/30" onClick={() => setModalOpen(false)}>
+                <Button
+                  variant="outline"
+                  className="border-primary/30"
+                  onClick={() => setModalOpen(false)}
+                >
                   Batal
                 </Button>
-                <Button className="bg-primary hover:bg-primary/90" onClick={saveForm}>Simpan</Button>
+                <Button
+                  className="bg-primary hover:bg-primary/90"
+                  onClick={saveForm}
+                >
+                  Simpan
+                </Button>
               </div>
             </div>
           </div>
