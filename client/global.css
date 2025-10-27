@@ -21,10 +21,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 166 57% 23.8%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 175 34% 56.7%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
@@ -35,6 +35,13 @@
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
+
+    /* New semantic colors */
+    --success: 142.1 72.5% 45%;
+    --success-foreground: 210 40% 98%;
+
+    --warning: 37.7 92.1% 50.2%;
+    --warning-foreground: 222.2 47.4% 11.2%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
@@ -83,6 +90,10 @@
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
+    --success: 142.1 72.5% 40%;
+    --success-foreground: 210 40% 98%;
+    --warning: 37.7 92.1% 50.2%;
+    --warning-foreground: 222.2 47.4% 11.2%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
